@@ -19,3 +19,5 @@ for pl in {1..8}; do
     curl --silent ${CARDURL} > ${LOCALFILE}
   done
 done
+
+montage -bkackground black -geometry 200x285+4+4 -verbose -tile 8x4 card*.jpg draft.jpg
