@@ -7,11 +7,13 @@ RESULTDIR="drafts/"
 CARDSUFFIX="-card.jpg"
 
 if [ -z "$1" ]; then
-  echo "One argument expected: the base draft url"
+  echo "One argument expected: the draft id"
   exit 1
 else
-  URL=$1
+  URL="http://gatherer.wizards.com/magic/draftools/draftviewer.asp?draftid=$1"
 fi;
+
+RESULTFILE="${RESULTDIR}$1-4.jpg"
 
 for pl in {1..8}; do
   for pi in {1..4}; do
@@ -35,6 +37,6 @@ for pl in {1..8}; do
   done
 done
 
-montage -background black -geometry 200x285+4+4 -verbose -tile 8x4 ${TMPDIR}{0..31}${CARDSUFFIX} ${RESULTDIR}draft.jpg
+montage -background black -geometry 200x285+4+4 -verbose -tile 8x4 ${TMPDIR}{0..31}${CARDSUFFIX} ${RESULTFILE}
 
 rm ${TMPDIR}{0..31}${CARDSUFFIX}
