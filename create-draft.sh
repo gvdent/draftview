@@ -6,14 +6,20 @@ TMPDIR="tmp/"
 RESULTDIR="drafts/"
 CARDSUFFIX="-card.jpg"
 
-if [ -z "$1" ]; then
+if [ $# -eq 0  ]; then
   echo "One argument expected: the draft id"
   exit 1
 else
   URL="http://gatherer.wizards.com/magic/draftools/draftviewer.asp?draftid=$1"
-fi;
+fi
 
-RESULTFILE="${RESULTDIR}$1-4.jpg"
+if [ "$#" -ge 2 ]; then
+  ROWS="$2"
+else
+  ROWS=4
+fi
+
+RESULTFILE="${RESULTDIR}$1-${ROWS}.jpg"
 
 if [ -f "${RESULTFILE}" ]; then
   echo "Result has previously been generated. Skipping"
@@ -21,7 +27,7 @@ if [ -f "${RESULTFILE}" ]; then
 fi;
 
 for pl in {1..8}; do
-  for pi in {1..4}; do
+  for pi in $(eval echo {1..${ROWS}}); do
     CARDURL=$(curl --silent "${URL}&player=${pl}&pack=1&pick=${pi}&showpick=true" | grep "class='pickedcardimage'" | sed -e "s/.*src='\([^']*\)'.*/\1/")
 
     # We need to go from player 8 to 1, since players pass to the higher player 
@@ -42,6 +48,8 @@ for pl in {1..8}; do
   done
 done
 
-montage -background black -geometry 200x285+4+4 -verbose -tile 8x4 ${TMPDIR}{0..31}${CARDSUFFIX} ${RESULTFILE}
+CARDS=$(eval echo ${TMPDIR}{0..$(( ( 8 * ${ROWS}) - 1))}${CARDSUFFIX})
 
-rm ${TMPDIR}{0..31}${CARDSUFFIX}
+montage -background black -geometry 200x285+4+4 -verbose -tile 8x4 ${CARDS} ${RESULTFILE}
+
+rm ${CARDS} 
