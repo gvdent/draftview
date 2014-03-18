@@ -15,6 +15,11 @@ fi;
 
 RESULTFILE="${RESULTDIR}$1-4.jpg"
 
+if [ -f "${RESULTFILE}" ]; then
+  echo "Result has previously been generated. Skipping"
+  exit 0
+fi;
+
 for pl in {1..8}; do
   for pi in {1..4}; do
     CARDURL=$(curl --silent "${URL}&player=${pl}&pack=1&pick=${pi}&showpick=true" | grep "class='pickedcardimage'" | sed -e "s/.*src='\([^']*\)'.*/\1/")
