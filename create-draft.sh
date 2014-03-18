@@ -2,6 +2,10 @@
 
 set -e 
 
+TMPDIR="tmp/"
+RESULTDIR="drafts/"
+CARDSUFFIX="-card.jpg"
+
 if [ -z "$1" ]; then
   echo "One argument expected: the base draft url"
   exit 1
@@ -25,12 +29,12 @@ for pl in {1..8}; do
     col=$(( ( ${p} + ${k} ) % 8 ))
 
 
-    LOCALFILE=$(( ( 8 * ${row} ) + ${col} ))-card.jpg
-    echo -n "${pl}: ${pi} -> "
-    echo ${LOCALFILE}
+    LOCALFILE="${TMPDIR}$(( ( 8 * ${row} ) + ${col} ))${CARDSUFFIX}"
 
-    curl --silent ${CARDURL} > ${LOCALFILE}
+    curl --silent "${CARDURL}" > "${LOCALFILE}"
   done
 done
 
-montage -background black -geometry 200x285+4+4 -verbose -tile 8x4 $(ls *card.jpg | sort -n) draft.jpg
+montage -background black -geometry 200x285+4+4 -verbose -tile 8x4 ${TMPDIR}{0..31}${CARDSUFFIX} ${RESULTDIR}draft.jpg
+
+rm ${TMPDIR}{0..31}${CARDSUFFIX}
