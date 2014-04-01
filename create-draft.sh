@@ -5,6 +5,17 @@ set -e
 TMPDIR="tmp/"
 RESULTDIR="drafts/"
 CARDSUFFIX="-card.jpg"
+CACHEDIR="cache/"
+
+FILE=""
+function getFile {
+  FILEURL=$1
+  FILE=${CACHEDIR}$(echo "${FILEURL}" | md5sum | awk '{ print $1 }')
+
+  if [ ! -f ${FILE} ]; then
+    curl --silent "${FILEURL}" > ${FILE}
+  fi;
+}
 
 if [ $# -eq 0  ]; then
   echo "One argument expected: the draft id"
@@ -28,7 +39,8 @@ fi;
 
 for pl in {1..8}; do
   for pi in $(eval echo {1..${ROWS}}); do
-    CARDURL=$(curl --silent "${URL}&player=${pl}&pack=1&pick=${pi}&showpick=true" | grep "class='pickedcardimage'" | sed -e "s/.*src='\([^']*\)'.*/\1/")
+    getFile "${URL}&player=${pl}&pack=1&pick=${pi}&showpick=true"
+    CARDURL=$(cat "${FILE}" | grep "class='pickedcardimage'" | sed -e "s/.*src='\([^']*\)'.*/\1/")
 
     # We need to go from player 8 to 1, since players pass to the higher player 
     # number, and we want the packs to be in the columns, and player picks from
@@ -44,7 +56,8 @@ for pl in {1..8}; do
 
     LOCALFILE="${TMPDIR}$(( ( 8 * ${row} ) + ${col} ))${CARDSUFFIX}"
 
-    curl --silent "${CARDURL}" > "${LOCALFILE}"
+    getFile "${CARDURL}"
+    cp "${FILE}" "${LOCALFILE}"
   done
 done
 
