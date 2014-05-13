@@ -1,0 +1,14 @@
+Purpose
+
+create-draft.sh generates an image based on data provided through the Wizards of the Coast draft viewer. The columns show the first packs opened in the draft, and the rows show the picks from those packs, in order. Individual player picks go from the top left to the bottom right, so the player which picked the card in the first row, second column also picked the card in the second row, third column.
+
+Acknowledgements
+
+The concept of the layout was introduced by Simon Goertzen (@simongoertzen) in episode 57 of "Simon Says"
+
+Requirements
+
+bash
+md5sum
+curl
+imagemagick
