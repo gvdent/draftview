@@ -63,6 +63,6 @@ done
 
 CARDS=$(eval echo ${TMPDIR}{0..$(( ( 8 * ${ROWS}) - 1))}${CARDSUFFIX})
 
-montage -background black -geometry 200x285+4+4 -verbose -tile 8x${ROWS} ${CARDS} ${RESULTFILE}
+montage -background black -geometry 200x285+1+1 -verbose -tile 8x${ROWS} ${CARDS} ${RESULTFILE}
 
 rm ${CARDS} 
