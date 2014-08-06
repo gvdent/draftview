@@ -40,7 +40,7 @@ fi;
 for pl in {1..8}; do
   for pi in $(eval echo {1..${ROWS}}); do
     getFile "${URL}&player=${pl}&pack=1&pick=${pi}&showpick=true"
-    CARDURL=$(cat "${FILE}" | grep "class='pickedcardimage'" | sed -e "s/.*src='\([^']*\)'.*/\1/")
+    CARDURL=$(iconv -f windows-1252 -t ascii//TRANSLIT "${FILE}" | grep "class='pickedcardimage'" | sed -e "s/.*src='\([^']*\)'.*/\1/")
 
     # We need to go from player 8 to 1, since players pass to the higher player 
     # number, and we want the packs to be in the columns, and player picks from
