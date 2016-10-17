@@ -32,14 +32,13 @@ fi
 
 RESULTFILE="${RESULTDIR}$1-${ROWS}.jpg"
 
-if [ -f "${RESULTFILE}" ]; then
-  echo "Result has previously been generated. Skipping"
-  exit 0
-fi;
-
 for pl in {1..8}; do
   for pi in $(eval echo {1..${ROWS}}); do
     getFile "${URL}&player=${pl}&pack=1&pick=${pi}&showpick=true"
+    if (( ${pl} == 1 && $pi == 1 ));
+    then
+      iconv -f windows-1252 -t ascii//TRANSLIT "${FILE}" | grep Player | sed -e "s/.*option value='\([^']*\)'[^>]*>Player: \([^<]*\)<.*/\1 \2/" | sort | uniq | sed -e 's/[0-9] //' > players
+    fi
     CARDURL=$(iconv -f windows-1252 -t ascii//TRANSLIT "${FILE}" | grep "class='pickedcardimage'" | sed -e "s/.*src='\([^']*\)'.*/\1/")
 
     # We need to go from player 8 to 1, since players pass to the higher player 
@@ -65,4 +64,17 @@ CARDS=$(eval echo ${TMPDIR}{0..$(( ( 8 * ${ROWS}) - 1))}${CARDSUFFIX})
 
 montage -background black -geometry 200x285+1+1 -verbose -tile 8x${ROWS} ${CARDS} ${RESULTFILE}
 
+i=1
+while read p; do
+  convert -background white -fill black  -font Arial -size 202x20 "label:${p}" ${i}.gif
+  i=$((${i} + 1))
+done < players
+
+convert 8.gif 7.gif 6.gif 5.gif 4.gif 3.gif 2.gif 1.gif +append players.gif
+convert players.gif ${RESULTFILE} -append annotated.jpg
+
+mv annotated.jpg ${RESULTFILE}
+rm *.gif
+
+rm players
 rm ${CARDS} 
