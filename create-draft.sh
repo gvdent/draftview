@@ -27,7 +27,7 @@ fi
 if [ "$#" -ge 2 ]; then
   ROWS="$2"
 else
-  ROWS=4
+  ROWS=15
 fi
 
 RESULTFILE="${RESULTDIR}$1-${ROWS}.jpg"
